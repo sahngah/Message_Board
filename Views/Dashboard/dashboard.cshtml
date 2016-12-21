@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "The Wall";
+}
+@model userDashboard.Models.Post
+<h1>Welcome to the Wall, @ViewBag.curUser.firstname.Remove(1).ToUpper()@ViewBag.curUser.firstname.Substring(1)!</h1>
+
+<form asp-controller="Dashboard" asp-action="Post" method="post" role="form">
+  <div asp-validation-summary="All"></div>
+   <div class="form-group">
+    <label for="content">Post a Message:</label><br>
+    <textarea asp-for="content" class="form-control" cols="66" rows="5" placeholder="Write a message!"></textarea>
+  </div>
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+<hr>
+@foreach(var post in ViewBag.Posts)
+    {
+        <h3>@post.user.firstname -- @post.createdat</h3>
+        <p>@post.content</p>
+        @if(@post.user.firstname == @ViewBag.curUser.firstname)
+        {
+            <form action="delete" method="post">
+                <input type="hidden" name="id" value="@post.id">
+                <button type="submit" class="btn btn-default">Delete this Message</button>
+            </form><br>
+        }
+        @foreach(var comment in ViewBag.Comments)
+        {
+            @if(@comment.post.id == @post.id)
+            {
+            <h4> - @comment.user.firstname -- @comment.createdat</h4>
+            <p> - @comment.commentcontent</p>
+            }
+        }
+        @if(ViewBag.isThere == true)
+        {
+            <p>@ViewBag.error</p>
+        }
+        <form action="comment" method="post">
+        <input type="hidden" name="id" value="@post.id">
+        <textarea name="commentcontent" cols="60" rows="5" placeholder="Write a Comment!"></textarea>
+        <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <hr>
+    }
+
+<a href="logout">Click here to Logout!</a href>
